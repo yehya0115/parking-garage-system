@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "Money.h"
+#include "Time.h"
 
 using namespace std;
 
@@ -9,23 +10,37 @@ int main()
 {
     try
     {
-        Money hourlyRate(2000);
-        Money extra(505);
-        Money fee = hourlyRate * 3;
+        Time entry(0, 23, 30);
+        Time exit(1, 1, 0);
 
-        cout << "Hourly rate: " << hourlyRate << endl;
-        cout << "Fee for 3 hours: " << fee << endl;
-        cout << "Addition: " << hourlyRate + extra << endl;
-        cout << "Subtraction: " << hourlyRate - extra << endl;
+        int duration = exit - entry;
+
+        int chargedHours = duration / 60;
+
+        if (duration % 60 != 0)
+        {
+            ++chargedHours;
+        }
+
+        Money hourlyRate(2000);
+        Money fee = hourlyRate * chargedHours;
+
+        cout << "Entry: " << entry << endl;
+        cout << "Exit: " << exit << endl;
+        cout << "Duration: " << duration << " minutes" << endl;
+        cout << "Charged hours: " << chargedHours << endl;
+        cout << "Fee: " << fee << endl;
 
         cout << boolalpha;
-        cout << "Equal to 60 EGP: " << (fee == Money(6000)) << endl;
-        cout << "Extra is smaller: " << (extra < hourlyRate) << endl;
-        cout << "Zero hours: " << hourlyRate * 0 << endl;
+        cout << "Entry before exit: " << (entry < exit) << endl;
+        cout << "Equal entry times: "
+            << (entry == Time(0, 23, 30)) << endl;
+        cout << "Same-time duration: " << (entry - entry) << endl;
+        cout << "Reverse difference: " << (entry - exit) << endl;
 
-        cout << "Testing a negative amount..." << endl;
-        Money invalidAmount(-100);
-        cout << invalidAmount << endl;
+        cout << "Testing an invalid hour..." << endl;
+        Time invalidTime(0, 24, 0);
+        cout << invalidTime << endl;
     }
     catch (const exception& error)
     {

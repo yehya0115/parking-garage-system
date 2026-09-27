@@ -3,6 +3,8 @@
     "CMakeProject1.h"
     "Money.cpp"
     "Money.h"
+    "Time.cpp"
+    "Time.h"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
