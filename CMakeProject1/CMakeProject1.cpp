@@ -1,66 +1,107 @@
 ﻿#include <iostream>
 #include <memory>
 #include <stdexcept>
-#include <vector>
 
+#include "ParkingSlot.h"
 #include "Vehicles.h"
-
-const char* getSizeName(SlotSize size)
-{
-    switch (size)
-    {
-    case SlotSize::Small:
-        return "Small";
-
-    case SlotSize::Medium:
-        return "Medium";
-
-    case SlotSize::Large:
-        return "Large";
-    }
-
-    return "Unknown";
-}
 
 int main()
 {
     try
     {
-        std::vector<std::unique_ptr<Vehicle>> vehicles;
+        std::cout << std::boolalpha;
 
-        vehicles.push_back(std::make_unique<Car>("CAR-123"));
-        vehicles.push_back(std::make_unique<Motorcycle>("BIKE-456"));
-        vehicles.push_back(std::make_unique<Truck>("TRUCK-789"));
+        ParkingSlot slot(SlotSize::Medium);
+        std::unique_ptr<Vehicle> car =
+            std::make_unique<Car>("CAR-123");
 
-        for (const auto& vehicle : vehicles)
+        std::cout << "Before parking:\n";
+        std::cout << "Caller owns car: " << (car != nullptr) << '\n';
+        std::cout << "Slot occupied: " << slot.isOccupied() << "\n\n";
+
+        slot.park(car);
+
+        std::cout << "After parking:\n";
+        std::cout << "Caller pointer is null: " << (car == nullptr) << '\n';
+        std::cout << "Slot occupied: " << slot.isOccupied() << '\n';
+        std::cout << "Parked plate: "
+            << slot.getVehicle()->getPlate() << "\n\n";
+
+        std::unique_ptr<Vehicle> bike =
+            std::make_unique<Motorcycle>("BIKE-456");
+
+        try
         {
-            std::cout << "Type: " << vehicle->getType() << '\n';
-            std::cout << "Plate: " << vehicle->getPlate() << '\n';
-            std::cout << "Hourly rate: "
-                << vehicle->getHourlyRate() << '\n';
-            std::cout << "Required size: "
-                << getSizeName(vehicle->getRequiredSize()) << '\n';
-            std::cout << "Fee for 3 hours: "
-                << vehicle->getHourlyRate() * 3 << "\n\n";
+            slot.park(bike);
+            std::cerr << "Test failed: occupied slot accepted a vehicle.\n";
+            return 1;
+        }
+        catch (const std::runtime_error& error)
+        {
+            std::cout << "Expected error: " << error.what() << '\n';
+        }
+
+        std::cout << "Caller still owns bike: "
+            << (bike != nullptr) << "\n\n";
+
+        car = slot.retrieve();
+
+        std::cout << "After retrieval:\n";
+        std::cout << "Caller owns car: " << (car != nullptr) << '\n';
+        std::cout << "Slot occupied: " << slot.isOccupied() << "\n\n";
+
+        std::unique_ptr<Vehicle> truck =
+            std::make_unique<Truck>("TRUCK-789");
+
+        try
+        {
+            slot.park(truck);
+            std::cerr << "Test failed: oversized vehicle was accepted.\n";
+            return 1;
+        }
+        catch (const std::invalid_argument& error)
+        {
+            std::cout << "Expected error: " << error.what() << '\n';
+        }
+
+        std::cout << "Caller still owns truck: "
+            << (truck != nullptr) << '\n';
+
+        slot.park(bike);
+
+        std::cout << "Motorcycle fits in Medium slot: "
+            << slot.isOccupied() << '\n';
+
+        bike = slot.retrieve();
+
+        try
+        {
+            auto missingVehicle = slot.retrieve();
+            std::cerr << "Test failed: empty slot retrieval succeeded.\n";
+            return 1;
+        }
+        catch (const std::runtime_error& error)
+        {
+            std::cout << "Expected error: " << error.what() << '\n';
+        }
+
+        std::unique_ptr<Vehicle> emptyVehicle;
+
+        try
+        {
+            slot.park(emptyVehicle);
+            std::cerr << "Test failed: null vehicle was accepted.\n";
+            return 1;
+        }
+        catch (const std::invalid_argument& error)
+        {
+            std::cout << "Expected error: " << error.what() << '\n';
         }
     }
     catch (const std::exception& error)
     {
         std::cerr << "Unexpected error: " << error.what() << '\n';
         return 1;
-    }
-
-    std::cout << "Testing an empty license plate...\n";
-
-    try
-    {
-        Car invalidCar("");
-        std::cout << "Test failed: empty plate was accepted.\n";
-        return 1;
-    }
-    catch (const std::invalid_argument& error)
-    {
-        std::cout << "Expected error: " << error.what() << '\n';
     }
 
     return 0;
