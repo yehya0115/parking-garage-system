@@ -1,6 +1,8 @@
 ﻿add_executable(CMakeProject1
     "CMakeProject1.cpp"
     "CMakeProject1.h"
+    "Money.cpp"
+    "Money.h"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
