@@ -1,4 +1,4 @@
-\# Parking Garage System
+﻿# Parking Garage System
 
 
 
@@ -6,7 +6,7 @@ A C++17 console project for managing a multi-floor parking garage.
 
 
 
-\## Author
+## Author
 
 
 
@@ -14,71 +14,71 @@ Yehya Ahmed Mohamed Hassan - Individual project.
 
 
 
-\## Current Progress
+## Current Progress
 
 
 
-\- CMake project configured for C++17.
+- CMake project configured for C++17.
 
-\- Basic console program runs successfully.
+- Basic console program runs successfully.
 
-\- Git repository and .gitignore created.
+- Git repository and .gitignore created.
 
-\- Garage features are not implemented yet.
-
-
-
-\## Planned Features
+- Garage features are not implemented yet.
 
 
 
-\- Park cars, motorcycles, and trucks.
-
-\- Choose a free slot with a suitable size.
-
-\- Issue a ticket with a unique number and entry time.
-
-\- Retrieve a vehicle using its ticket number.
-
-\- Calculate parking fees by vehicle type and parking duration.
-
-\- Display an occupancy map for each floor.
-
-\- Handle invalid input, invalid tickets, and unavailable slots.
-
-\- Provide a demo mode without menu input.
+## Planned Features
 
 
 
-\## Initial Rules
+- Park cars, motorcycles, and trucks.
+
+- Choose a free slot with a suitable size.
+
+- Issue a ticket with a unique number and entry time.
+
+- Retrieve a vehicle using its ticket number.
+
+- Calculate parking fees by vehicle type and parking duration.
+
+- Display an occupancy map for each floor.
+
+- Handle invalid input, invalid tickets, and unavailable slots.
+
+- Provide a demo mode without menu input.
 
 
 
-\- Slot sizes: Small, Medium, Large.
-
-\- Motorcycle requires Small, Car requires Medium, Truck requires Large.
-
-\- A larger slot can accept a smaller vehicle.
-
-\- Use the smallest available suitable slot.
-
-\- Planned hourly rates: Motorcycle 10 EGP, Car 20 EGP, Truck 40 EGP.
-
-\- Each started hour is charged as a full hour.
-
-\- Zero minutes costs zero.
-
-\- Time includes a day number, hour, and minute.
-
-\- Exit time cannot be earlier than entry time.
-
-\- Duplicate license plates inside the garage are rejected.
-
-\- Data is kept in memory during the program session.
+## Initial Rules
 
 
 
-\## Class Design and Planned Public Interfaces
+- Slot sizes: Small, Medium, Large.
+
+- Motorcycle requires Small, Car requires Medium, Truck requires Large.
+
+- A larger slot can accept a smaller vehicle.
+
+- Use the smallest available suitable slot.
+
+- Planned hourly rates: Motorcycle 10 EGP, Car 20 EGP, Truck 40 EGP.
+
+- Each started hour is charged as a full hour.
+
+- Zero minutes costs zero.
+
+- Time includes a day number, hour, and minute.
+
+- Exit time cannot be earlier than entry time.
+
+- Duplicate license plates inside the garage are rejected.
+
+- Data is kept in memory during the program session.
+
+
+
+## Class Design and Planned Public Interfaces
 
 
 
@@ -88,7 +88,7 @@ They are a design plan, not complete class definitions.
 
 
 
-\### Money
+### Money
 
 
 
@@ -96,25 +96,25 @@ Stores money as an integer number of piastres.
 
 
 
-\- explicit Money(long long piastres = 0)
+- explicit Money(long long piastres = 0)
 
-\- long long getPiastres() const
+- long long getPiastres() const
 
-\- Money operator+(const Money\& other) const
+- Money operator+(const Money& other) const
 
-\- Money operator-(const Money\& other) const
+- Money operator-(const Money& other) const
 
-\- Money operator\*(int hours) const
+- Money operator*(int hours) const
 
-\- bool operator==(const Money\& other) const
+- bool operator==(const Money& other) const
 
-\- bool operator<(const Money\& other) const
+- bool operator&lt;(const Money& other) const
 
-\- friend std::ostream\& operator<<(std::ostream\& out, const Money\& money)
+- friend std::ostream& operator&lt;&lt;(std::ostream& out, const Money& money)
 
 
 
-\### Time
+### Time
 
 
 
@@ -124,15 +124,15 @@ Day numbering starts at 0.
 
 
 
-\- Time(int day = 0, int hour = 0, int minute = 0)
+- Time(int day = 0, int hour = 0, int minute = 0)
 
-\- int operator-(const Time\& other) const
+- int operator-(const Time& other) const
 
-\- bool operator==(const Time\& other) const
+- bool operator==(const Time& other) const
 
-\- bool operator<(const Time\& other) const
+- bool operator&lt;(const Time& other) const
 
-\- friend std::ostream\& operator<<(std::ostream\& out, const Time\& time)
+- friend std::ostream& operator&lt;&lt;(std::ostream& out, const Time& time)
 
 
 
@@ -140,7 +140,7 @@ Subtracting two Time values returns the difference in minutes.
 
 
 
-\### Vehicle - Abstract Base Class
+### Vehicle - Abstract Base Class
 
 
 
@@ -148,21 +148,21 @@ Stores the license plate and defines vehicle-specific behaviour.
 
 
 
-\- explicit Vehicle(const std::string\& plate)
+- explicit Vehicle(const std::string& plate)
 
-\- virtual \~Vehicle() = default
+- virtual ~Vehicle() = default
 
-\- const std::string\& getPlate() const
+- const std::string& getPlate() const
 
-\- virtual std::string getType() const = 0
+- virtual std::string getType() const = 0
 
-\- virtual Money getHourlyRate() const = 0
+- virtual Money getHourlyRate() const = 0
 
-\- virtual SlotSize getRequiredSize() const = 0
+- virtual SlotSize getRequiredSize() const = 0
 
 
 
-\### Car, Motorcycle, Truck
+### Car, Motorcycle, Truck
 
 
 
@@ -170,37 +170,37 @@ Each class inherits from Vehicle.
 
 
 
-\- Constructor accepting const std::string\& plate
+- Constructor accepting const std::string& plate
 
-\- std::string getType() const override
+- std::string getType() const override
 
-\- Money getHourlyRate() const override
+- Money getHourlyRate() const override
 
-\- SlotSize getRequiredSize() const override
-
-
-
-\### ParkingSlot
+- SlotSize getRequiredSize() const override
 
 
 
-Owns a parked vehicle through std::unique\_ptr<Vehicle>.
+### ParkingSlot
 
 
 
-\- explicit ParkingSlot(SlotSize size)
+Owns a parked vehicle through std::unique_ptr&lt;Vehicle&gt;.
 
-\- SlotSize getSize() const
 
-\- bool isOccupied() const
 
-\- bool canFit(const Vehicle\& vehicle) const
+- explicit ParkingSlot(SlotSize size)
 
-\- const Vehicle\* getVehicle() const
+- SlotSize getSize() const
 
-\- void park(std::unique\_ptr<Vehicle>\& vehicle)
+- bool isOccupied() const
 
-\- std::unique\_ptr<Vehicle> retrieve()
+- bool canFit(const Vehicle& vehicle) const
+
+- const Vehicle* getVehicle() const
+
+- void park(std::unique_ptr&lt;Vehicle&gt;& vehicle)
+
+- std::unique_ptr&lt;Vehicle&gt; retrieve()
 
 
 
@@ -212,29 +212,29 @@ retrieve() moves ownership back to the caller.
 
 
 
-\### Floor
+### Floor
 
 
 
 Contains a two-dimensional grid of ParkingSlot objects:
 
-std::vector<std::vector<ParkingSlot>>.
+std::vector&lt;std::vector&lt;ParkingSlot&gt;&gt;.
 
 
 
-\- Floor(int number, int rows, int columns)
+- Floor(int number, int rows, int columns)
 
-\- int getNumber() const
+- int getNumber() const
 
-\- int getRows() const
+- int getRows() const
 
-\- int getColumns() const
+- int getColumns() const
 
-\- int getOccupiedCount() const
+- int getOccupiedCount() const
 
-\- ParkingSlot\& getSlot(int row, int column)
+- ParkingSlot& getSlot(int row, int column)
 
-\- const ParkingSlot\& getSlot(int row, int column) const
+- const ParkingSlot& getSlot(int row, int column) const
 
 
 
@@ -244,7 +244,7 @@ The grid dimensions remain fixed after construction.
 
 
 
-\### Ticket
+### Ticket
 
 
 
@@ -254,21 +254,21 @@ and floor/row/column coordinates.
 
 
 
-\- Ticket(int floor, int row, int column,
+- Ticket(int floor, int row, int column,
 
-&#x20;        const std::string\& plate, const Time\& entryTime)
+&#x20;        const std::string& plate, const Time& entryTime)
 
-\- int getNumber() const
+- int getNumber() const
 
-\- int getFloor() const
+- int getFloor() const
 
-\- int getRow() const
+- int getRow() const
 
-\- int getColumn() const
+- int getColumn() const
 
-\- const std::string\& getPlate() const
+- const std::string& getPlate() const
 
-\- const Time\& getEntryTime() const
+- const Time& getEntryTime() const
 
 
 
@@ -278,7 +278,7 @@ Coordinates identify a slot without owning it.
 
 
 
-\### Garage
+### Garage
 
 
 
@@ -286,25 +286,25 @@ Manages floors and active tickets.
 
 
 
-\- Garage(int floorCount, int rows, int columns)
+- Garage(int floorCount, int rows, int columns)
 
-\- Ticket parkVehicle(std::unique\_ptr<Vehicle>\& vehicle,
+- Ticket parkVehicle(std::unique_ptr&lt;Vehicle&gt;& vehicle,
 
-&#x20;                    const Time\& entryTime)
+&#x20;                    const Time& entryTime)
 
-\- Money calculateFee(int ticketNumber, const Time\& exitTime) const
+- Money calculateFee(int ticketNumber, const Time& exitTime) const
 
-\- std::unique\_ptr<Vehicle> retrieveVehicle(int ticketNumber,
+- std::unique_ptr&lt;Vehicle&gt; retrieveVehicle(int ticketNumber,
 
-&#x20;                                         const Time\& exitTime)
+&#x20;                                         const Time& exitTime)
 
-\- const Ticket\& getTicket(int ticketNumber) const
+- const Ticket& getTicket(int ticketNumber) const
 
-\- const Floor\& getFloor(int index) const
+- const Floor& getFloor(int index) const
 
-\- int getFloorCount() const
+- int getFloorCount() const
 
-\- int getOccupiedCount() const
+- int getOccupiedCount() const
 
 
 
@@ -316,13 +316,13 @@ The menu calculates and displays the fee before retrieval.
 
 
 
-\### Custom Exceptions
+### Custom Exceptions
 
 
 
 GarageFullException and InvalidTicketException derive
 
-from std::runtime\_error.
+from std::runtime_error.
 
 
 
@@ -332,39 +332,39 @@ They use the inherited what() function.
 
 
 
-\## Memory Management Plan
+## Memory Management Plan
 
 
 
-\- Create vehicles with std::make\_unique.
+- Create vehicles with std::make_unique.
 
-\- Use std::unique\_ptr<Vehicle> for exclusive ownership.
+- Use std::unique_ptr&lt;Vehicle&gt; for exclusive ownership.
 
-\- Move ownership into a slot when parking.
+- Move ownership into a slot when parking.
 
-\- Move ownership back to the caller when retrieving.
+- Move ownership back to the caller when retrieving.
 
-\- If parking fails, the caller keeps ownership.
+- If parking fails, the caller keeps ownership.
 
-\- Tickets store slot coordinates, not owning pointers.
+- Tickets store slot coordinates, not owning pointers.
 
-\- Do not use raw new or delete.
+- Do not use raw new or delete.
 
-\- Use standard containers and Rule of Zero where appropriate.
+- Use standard containers and Rule of Zero where appropriate.
 
-\- Demonstrate ownership changes in demo mode.
-
-
-
-\## SOLID Plan
+- Demonstrate ownership changes in demo mode.
 
 
 
-\- Single Responsibility: separate money, time, vehicles,
+## SOLID Plan
+
+
+
+- Single Responsibility: separate money, time, vehicles,
 
 &#x20; parking management, and console interaction.
 
-\- Open/Closed: Garage uses Vehicle virtual functions for
+- Open/Closed: Garage uses Vehicle virtual functions for
 
 &#x20; rates and sizes, allowing new vehicle types without
 
@@ -372,21 +372,22 @@ They use the inherited what() function.
 
 
 
-\## Remaining Work
+## Remaining Work
 
 
 
-\- Implement the planned classes.
+- Implement the planned classes.
 
-\- Add the console menu and demo mode.
+- Add the console menu and demo mode.
 
-\- Document verified build and run commands.
+- Document verified build and run commands.
 
-\- Add at least 10 manual test cases with expected results.
+- Add at least 10 manual test cases with expected results.
 
-\- Check compiler warnings and run Valgrind.
+- Check compiler warnings and run Valgrind.
 
-\- Record meaningful commits and merge feature branches
+- Record meaningful commits and merge feature branches
 
 &#x20; through GitHub pull requests.
+
 
