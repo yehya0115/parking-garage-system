@@ -10,6 +10,8 @@
     "Vehicle.h"
     "Vehicles.cpp"
     "Vehicles.h"
+    "ParkingSlot.cpp"
+    "ParkingSlot.h"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
