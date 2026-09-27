@@ -2,95 +2,73 @@
 #include <memory>
 #include <stdexcept>
 
-#include "ParkingSlot.h"
+#include "Floor.h"
 #include "Vehicles.h"
 
 int main()
 {
     try
     {
-        std::cout << std::boolalpha;
+        Floor floor(0, 2, 3);
 
-        ParkingSlot slot(SlotSize::Medium);
-        std::unique_ptr<Vehicle> car =
-            std::make_unique<Car>("CAR-123");
-
-        std::cout << "Before parking:\n";
-        std::cout << "Caller owns car: " << (car != nullptr) << '\n';
-        std::cout << "Slot occupied: " << slot.isOccupied() << "\n\n";
-
-        slot.park(car);
-
-        std::cout << "After parking:\n";
-        std::cout << "Caller pointer is null: " << (car == nullptr) << '\n';
-        std::cout << "Slot occupied: " << slot.isOccupied() << '\n';
-        std::cout << "Parked plate: "
-            << slot.getVehicle()->getPlate() << "\n\n";
+        std::cout << "Floor: " << floor.getNumber() << '\n';
+        std::cout << "Rows: " << floor.getRows() << '\n';
+        std::cout << "Columns: " << floor.getColumns() << '\n';
+        std::cout << "Initially occupied: "
+            << floor.getOccupiedCount() << '\n';
 
         std::unique_ptr<Vehicle> bike =
-            std::make_unique<Motorcycle>("BIKE-456");
+            std::make_unique<Motorcycle>("BIKE-100");
 
-        try
-        {
-            slot.park(bike);
-            std::cerr << "Test failed: occupied slot accepted a vehicle.\n";
-            return 1;
-        }
-        catch (const std::runtime_error& error)
-        {
-            std::cout << "Expected error: " << error.what() << '\n';
-        }
-
-        std::cout << "Caller still owns bike: "
-            << (bike != nullptr) << "\n\n";
-
-        car = slot.retrieve();
-
-        std::cout << "After retrieval:\n";
-        std::cout << "Caller owns car: " << (car != nullptr) << '\n';
-        std::cout << "Slot occupied: " << slot.isOccupied() << "\n\n";
+        std::unique_ptr<Vehicle> car =
+            std::make_unique<Car>("CAR-200");
 
         std::unique_ptr<Vehicle> truck =
-            std::make_unique<Truck>("TRUCK-789");
+            std::make_unique<Truck>("TRUCK-300");
+
+        floor.getSlot(0, 0).park(bike);
+        floor.getSlot(0, 1).park(car);
+        floor.getSlot(1, 2).park(truck);
+
+        std::cout << "After parking: "
+            << floor.getOccupiedCount() << '\n';
+
+        const Floor& view = floor;
+
+        std::cout << "\nOccupancy map (X = occupied, . = empty):\n";
+
+        for (int row = 0; row < view.getRows(); ++row)
+        {
+            for (int column = 0; column < view.getColumns(); ++column)
+            {
+                const ParkingSlot& slot = view.getSlot(row, column);
+                std::cout << (slot.isOccupied() ? 'X' : '.') << ' ';
+            }
+
+            std::cout << '\n';
+        }
+
+        car = floor.getSlot(0, 1).retrieve();
+
+        std::cout << "\nRetrieved plate: " << car->getPlate() << '\n';
+        std::cout << "After retrieval: "
+            << floor.getOccupiedCount() << '\n';
 
         try
         {
-            slot.park(truck);
-            std::cerr << "Test failed: oversized vehicle was accepted.\n";
+            floor.getSlot(2, 0);
+            std::cerr << "Test failed: invalid coordinates accepted.\n";
             return 1;
         }
-        catch (const std::invalid_argument& error)
+        catch (const std::out_of_range& error)
         {
             std::cout << "Expected error: " << error.what() << '\n';
         }
 
-        std::cout << "Caller still owns truck: "
-            << (truck != nullptr) << '\n';
-
-        slot.park(bike);
-
-        std::cout << "Motorcycle fits in Medium slot: "
-            << slot.isOccupied() << '\n';
-
-        bike = slot.retrieve();
-
         try
         {
-            auto missingVehicle = slot.retrieve();
-            std::cerr << "Test failed: empty slot retrieval succeeded.\n";
-            return 1;
-        }
-        catch (const std::runtime_error& error)
-        {
-            std::cout << "Expected error: " << error.what() << '\n';
-        }
-
-        std::unique_ptr<Vehicle> emptyVehicle;
-
-        try
-        {
-            slot.park(emptyVehicle);
-            std::cerr << "Test failed: null vehicle was accepted.\n";
+            Floor invalidFloor(0, 0, 3);
+            std::cerr << "Test failed: zero rows accepted.\n";
             return 1;
         }
         catch (const std::invalid_argument& error)
