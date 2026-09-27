@@ -5,6 +5,11 @@
     "Money.h"
     "Time.cpp"
     "Time.h"
+    "SlotSize.h"
+    "Vehicle.cpp"
+    "Vehicle.h"
+    "Vehicles.cpp"
+    "Vehicles.h"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
