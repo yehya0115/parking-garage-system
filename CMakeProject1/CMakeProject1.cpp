@@ -1,50 +1,66 @@
 ﻿#include <iostream>
+#include <memory>
 #include <stdexcept>
+#include <vector>
 
-#include "Money.h"
-#include "Time.h"
+#include "Vehicles.h"
 
-using namespace std;
+const char* getSizeName(SlotSize size)
+{
+    switch (size)
+    {
+    case SlotSize::Small:
+        return "Small";
+
+    case SlotSize::Medium:
+        return "Medium";
+
+    case SlotSize::Large:
+        return "Large";
+    }
+
+    return "Unknown";
+}
 
 int main()
 {
     try
     {
-        Time entry(0, 23, 30);
-        Time exit(1, 1, 0);
+        std::vector<std::unique_ptr<Vehicle>> vehicles;
 
-        int duration = exit - entry;
+        vehicles.push_back(std::make_unique<Car>("CAR-123"));
+        vehicles.push_back(std::make_unique<Motorcycle>("BIKE-456"));
+        vehicles.push_back(std::make_unique<Truck>("TRUCK-789"));
 
-        int chargedHours = duration / 60;
-
-        if (duration % 60 != 0)
+        for (const auto& vehicle : vehicles)
         {
-            ++chargedHours;
+            std::cout << "Type: " << vehicle->getType() << '\n';
+            std::cout << "Plate: " << vehicle->getPlate() << '\n';
+            std::cout << "Hourly rate: "
+                << vehicle->getHourlyRate() << '\n';
+            std::cout << "Required size: "
+                << getSizeName(vehicle->getRequiredSize()) << '\n';
+            std::cout << "Fee for 3 hours: "
+                << vehicle->getHourlyRate() * 3 << "\n\n";
         }
-
-        Money hourlyRate(2000);
-        Money fee = hourlyRate * chargedHours;
-
-        cout << "Entry: " << entry << endl;
-        cout << "Exit: " << exit << endl;
-        cout << "Duration: " << duration << " minutes" << endl;
-        cout << "Charged hours: " << chargedHours << endl;
-        cout << "Fee: " << fee << endl;
-
-        cout << boolalpha;
-        cout << "Entry before exit: " << (entry < exit) << endl;
-        cout << "Equal entry times: "
-            << (entry == Time(0, 23, 30)) << endl;
-        cout << "Same-time duration: " << (entry - entry) << endl;
-        cout << "Reverse difference: " << (entry - exit) << endl;
-
-        cout << "Testing an invalid hour..." << endl;
-        Time invalidTime(0, 24, 0);
-        cout << invalidTime << endl;
     }
-    catch (const exception& error)
+    catch (const std::exception& error)
     {
-        cout << "Error: " << error.what() << endl;
+        std::cerr << "Unexpected error: " << error.what() << '\n';
+        return 1;
+    }
+
+    std::cout << "Testing an empty license plate...\n";
+
+    try
+    {
+        Car invalidCar("");
+        std::cout << "Test failed: empty plate was accepted.\n";
+        return 1;
+    }
+    catch (const std::invalid_argument& error)
+    {
+        std::cout << "Expected error: " << error.what() << '\n';
     }
 
     return 0;
