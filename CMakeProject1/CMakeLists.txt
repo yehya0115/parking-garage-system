@@ -21,6 +21,8 @@
     "Garage.cpp"
     "ConsoleMenu.h"
     "ConsoleMenu.cpp"
+        "Demo.h"
+    "Demo.cpp"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
