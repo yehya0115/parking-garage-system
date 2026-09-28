@@ -14,6 +14,8 @@
     "ParkingSlot.h"
     "Floor.cpp"
     "Floor.h"
+    "Ticket.cpp"
+    "Ticket.h"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
