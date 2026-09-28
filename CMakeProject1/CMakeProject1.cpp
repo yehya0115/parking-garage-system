@@ -1,80 +1,60 @@
 ﻿#include <iostream>
-#include <memory>
 #include <stdexcept>
 
-#include "Floor.h"
-#include "Vehicles.h"
+#include "Ticket.h"
 
 int main()
 {
     try
     {
-        Floor floor(0, 2, 3);
+        Ticket first(0, 0, 1, "CAR-123", Time(0, 10, 30));
+        Ticket second(1, 0, 2, "TRUCK-456", Time(0, 11, 0));
 
-        std::cout << "Floor: " << floor.getNumber() << '\n';
-        std::cout << "Rows: " << floor.getRows() << '\n';
-        std::cout << "Columns: " << floor.getColumns() << '\n';
-        std::cout << "Initially occupied: "
-            << floor.getOccupiedCount() << '\n';
+        std::cout << "First ticket: " << first.getNumber() << '\n';
+        std::cout << "Plate: " << first.getPlate() << '\n';
+        std::cout << "Entry: " << first.getEntryTime() << '\n';
 
-        std::unique_ptr<Vehicle> bike =
-            std::make_unique<Motorcycle>("BIKE-100");
+        std::cout << "Location: floor " << first.getFloor()
+            << ", row " << first.getRow()
+            << ", column " << first.getColumn() << '\n';
 
-        std::unique_ptr<Vehicle> car =
-            std::make_unique<Car>("CAR-200");
+        std::cout << "\nSecond ticket: "
+            << second.getNumber() << '\n';
 
-        std::unique_ptr<Vehicle> truck =
-            std::make_unique<Truck>("TRUCK-300");
+        Ticket copy = first;
 
-        floor.getSlot(0, 0).park(bike);
-        floor.getSlot(0, 1).park(car);
-        floor.getSlot(1, 2).park(truck);
+        std::cout << "Copied ticket number: "
+            << copy.getNumber() << '\n';
 
-        std::cout << "After parking: "
-            << floor.getOccupiedCount() << '\n';
-
-        const Floor& view = floor;
-
-        std::cout << "\nOccupancy map (X = occupied, . = empty):\n";
-
-        for (int row = 0; row < view.getRows(); ++row)
-        {
-            for (int column = 0; column < view.getColumns(); ++column)
-            {
-                const ParkingSlot& slot = view.getSlot(row, column);
-                std::cout << (slot.isOccupied() ? 'X' : '.') << ' ';
-            }
-
-            std::cout << '\n';
-        }
-
-        car = floor.getSlot(0, 1).retrieve();
-
-        std::cout << "\nRetrieved plate: " << car->getPlate() << '\n';
-        std::cout << "After retrieval: "
-            << floor.getOccupiedCount() << '\n';
+        std::cout << std::boolalpha;
+        std::cout << "Copy keeps the same number: "
+            << (copy.getNumber() == first.getNumber()) << '\n';
 
         try
         {
-            floor.getSlot(2, 0);
-            std::cerr << "Test failed: invalid coordinates accepted.\n";
+            Ticket invalid(-1, 0, 0, "BAD-100", Time());
+            std::cerr << "Test failed: negative coordinates accepted.\n";
             return 1;
         }
-        catch (const std::out_of_range& error)
+        catch (const std::invalid_argument& error)
         {
-            std::cout << "Expected error: " << error.what() << '\n';
+            std::cout << "\nExpected error: " << error.what() << '\n';
         }
 
         try
         {
-            Floor invalidFloor(0, 0, 3);
-            std::cerr << "Test failed: zero rows accepted.\n";
+            Ticket invalid(0, 0, 0, "   ", Time());
+            std::cerr << "Test failed: blank plate accepted.\n";
             return 1;
         }
         catch (const std::invalid_argument& error)
         {
             std::cout << "Expected error: " << error.what() << '\n';
         }
+
+        Ticket third(0, 1, 0, "BIKE-789", Time(0, 12, 0));
+
+        std::cout << "\nThird ticket: " << third.getNumber() << '\n';
     }
     catch (const std::exception& error)
     {
