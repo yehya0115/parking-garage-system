@@ -16,6 +16,9 @@
     "Floor.h"
     "Ticket.cpp"
     "Ticket.h"
+    "GarageExceptions.h"
+    "Garage.h"
+    "Garage.cpp"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
