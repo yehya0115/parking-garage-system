@@ -19,6 +19,8 @@
     "GarageExceptions.h"
     "Garage.h"
     "Garage.cpp"
+    "ConsoleMenu.h"
+    "ConsoleMenu.cpp"
 )
 
 set_target_properties(CMakeProject1 PROPERTIES
