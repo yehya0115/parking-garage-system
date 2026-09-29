@@ -1,4 +1,4 @@
-﻿# Parking Garage System
+# Parking Garage System
 
 A C++17 console application for managing a multi-floor parking garage.
 
@@ -6,11 +6,13 @@ A C++17 console application for managing a multi-floor parking garage.
 
 Yehya Ahmed Mohamed Hassan — Individual project.
 
+Project 8 — CodeForge Bootcamp, Egyptian Chinese University.
+
 ## Implemented Features
 
 - Park motorcycles, cars, and trucks.
 - Select the smallest available suitable slot across all floors.
-- Issue numbered tickets containing the license plate, entry time, and slot coordinates.
+- Issue numbered tickets with license plates, entry times, and slot coordinates.
 - Retrieve vehicles using active ticket numbers.
 - Calculate parking fees by vehicle type and duration.
 - Display an occupancy map for each floor.
@@ -52,9 +54,12 @@ Each row repeats the slot sizes Small, Medium, and Large.
 - A C++17 compiler.
 - CMake 3.15 or later.
 - A build tool compatible with the selected CMake generator.
+- Valgrind for the documented Linux memory check.
 
-Development and execution have been verified using Visual Studio 2022
-with the x64 Debug configuration on Windows.
+The application has been built and run on:
+
+- Windows using Visual Studio 2022 and the x64 Debug configuration.
+- Ubuntu under WSL using GCC 15.2.0 and CMake 4.2.3.
 
 ## Build and Run on Windows
 
@@ -62,11 +67,11 @@ with the x64 Debug configuration on Windows.
 2. Enable CMake support if prompted.
 3. Select the x64 Debug configuration.
 4. Wait for CMake generation to finish.
-5. Use Build > Rebuild All.
+5. Select Build > Rebuild All.
 6. Run the application using Ctrl+F5.
 
-The repository root is the folder containing the top-level
-`CMakeLists.txt` and `CMakePresets.json`.
+The repository root contains the top-level `CMakeLists.txt`
+and `CMakePresets.json`.
 
 After building, run the interactive application from PowerShell
 in the repository root:
@@ -98,8 +103,54 @@ and exits with code `0`.
 Unsupported command-line arguments print usage information and
 exit with code `1`.
 
-If building from a terminal, use an x64 developer environment.
-An x86 library environment must not be mixed with the x64 build.
+When building from a terminal, use an x64 developer environment
+for the x64 Windows build.
+
+## Build and Run on Linux
+
+Install the build and memory-checking tools on Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install build-essential cmake git valgrind
+```
+
+Open a terminal in the repository root.
+
+For the existing Windows checkout used during development,
+the WSL path is:
+
+```bash
+cd /mnt/d/prject/CMakeProject1
+```
+
+Configure and build:
+
+```bash
+cmake -S . -B ~/parking-garage-build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+cmake --build ~/parking-garage-build --parallel 2
+```
+
+The build directory is inside the Linux home directory.
+This also keeps Linux build files separate from the Windows build.
+
+Run the interactive application:
+
+```bash
+~/parking-garage-build/CMakeProject1/CMakeProject1
+```
+
+Run the automatic demo:
+
+```bash
+~/parking-garage-build/CMakeProject1/CMakeProject1 --demo
+```
+
+Check the exit code immediately afterward:
+
+```bash
+echo $?
+```
 
 ## Interactive Menu
 
@@ -128,6 +179,8 @@ Map symbols:
 - `X`: Occupied.
 - `.`: Empty.
 
+For example, `[1:MX]` means column 1 contains an occupied Medium slot.
+
 ## Project Structure
 
 Source files are stored in `CMakeProject1/`.
@@ -146,16 +199,17 @@ Source files are stored in `CMakeProject1/`.
 | `Garage.h`, `Garage.cpp` | Allocation, active tickets, fees, and retrieval |
 | `ConsoleMenu.h`, `ConsoleMenu.cpp` | Interactive input and output |
 | `Demo.h`, `Demo.cpp` | Noninteractive demonstration and checks |
-| `CMakeProject1.cpp` | Program entry point and command-line selection |
+| `CMakeProject1.cpp` | Entry point and command-line selection |
 
 ## Class Design and Public Interfaces
+
+The declarations below summarize the public interfaces.
+They are documentation excerpts, not standalone header files.
 
 ### Money
 
 Stores a nonnegative integer number of piastres, avoiding
 floating-point rounding in monetary values.
-
-Main public operations:
 
 ```cpp
 explicit Money(long long piastres = 0);
@@ -171,7 +225,9 @@ bool operator<(const Money& other) const;
 friend std::ostream& operator<<(std::ostream& out, const Money& money);
 ```
 
-Invalid negative amounts and negative results are rejected.
+Negative amounts, negative multipliers, and negative subtraction
+results are rejected.
+
 Addition and multiplication check for overflow.
 
 ### Time
@@ -208,8 +264,20 @@ virtual Money getHourlyRate() const = 0;
 virtual SlotSize getRequiredSize() const = 0;
 ```
 
-`Motorcycle`, `Car`, and `Truck` implement the virtual operations.
+`Motorcycle`, `Car`, and `Truck` each provide:
+
+```cpp
+// Constructor accepting const std::string& plate
+
+std::string getType() const override;
+Money getHourlyRate() const override;
+SlotSize getRequiredSize() const override;
+```
+
 Garage code works through the base-class interface.
+
+The virtual destructor allows correct destruction through
+a base-class pointer.
 
 ### ParkingSlot
 
@@ -243,10 +311,16 @@ Contains a fixed-size grid:
 std::vector<std::vector<ParkingSlot>>
 ```
 
-Main public operations:
+Public operations:
 
 ```cpp
 Floor(int number, int rows, int columns);
+
+Floor(const Floor&) = delete;
+Floor& operator=(const Floor&) = delete;
+
+Floor(Floor&&) noexcept = default;
+Floor& operator=(Floor&&) noexcept = default;
 
 int getNumber() const;
 int getRows() const;
@@ -258,6 +332,9 @@ const ParkingSlot& getSlot(int row, int column) const;
 ```
 
 Invalid dimensions and out-of-range coordinates are rejected.
+
+Copying is disabled because a floor contains slots with
+exclusive vehicle ownership.
 
 ### Ticket
 
@@ -284,12 +361,20 @@ it does not issue a new ticket.
 Ticket numbering is shared within the running process and resets
 when the application restarts.
 
+Tickets do not own vehicles or slots.
+
 ### Garage
 
 Owns floors and stores active tickets in `std::map<int, Ticket>`.
 
 ```cpp
 Garage(int floorCount, int rows, int columns);
+
+Garage(const Garage&) = delete;
+Garage& operator=(const Garage&) = delete;
+
+Garage(Garage&&) noexcept = default;
+Garage& operator=(Garage&&) noexcept = default;
 
 Ticket parkVehicle(std::unique_ptr<Vehicle>& vehicle,
                    const Time& entryTime);
@@ -317,12 +402,43 @@ moving the vehicle and removing the ticket.
 A reference returned by `getTicket()` must not be used after
 that ticket is removed.
 
+Copying is disabled to prevent duplicating exclusive ownership.
+
+## Fee Calculation
+
+Duration is calculated in minutes:
+
+```cpp
+const int minutes = exitTime - entryTime;
+```
+
+Started hours are rounded up:
+
+```cpp
+const int hours = minutes / 60 + (minutes % 60 != 0);
+```
+
+This avoids adding 59 to the duration, which could overflow
+for a duration near the maximum value of `int`.
+
+The fee is the vehicle's hourly rate multiplied by charged hours.
+
+Examples for a car:
+
+| Duration | Charged hours | Fee |
+| --- | --- | --- |
+| 0 minutes | 0 | 0 EGP |
+| 1 minute | 1 | 20 EGP |
+| 60 minutes | 1 | 20 EGP |
+| 61 minutes | 2 | 40 EGP |
+| 90 minutes | 2 | 40 EGP |
+
 ## Ownership and Copy/Move Behaviour
 
 - Vehicles are created with `std::make_unique`.
 - Before parking, the caller owns the vehicle.
 - Successful parking moves ownership into a slot.
-- The caller's pointer becomes null after that move.
+- The caller's pointer becomes null after the move.
 - Failed parking preserves caller ownership.
 - Retrieval moves ownership back to the caller.
 - Tickets store coordinates, not owning pointers.
@@ -347,6 +463,10 @@ Custom exceptions derive from `std::runtime_error`:
 - `GarageFullException`: no free suitable slot exists.
 - `InvalidTicketException`: the ticket is missing or already used.
 
+Both accept a descriptive message and use the inherited `what()` function.
+
+A suitable slot may be unavailable even when smaller slots remain empty.
+
 Standard exceptions report invalid inputs, coordinate errors,
 arithmetic overflow, and inconsistent internal state.
 
@@ -365,9 +485,11 @@ Responsibilities are separated:
 - Garage coordinates allocation, tickets, and retrieval.
 - ConsoleMenu handles user interaction.
 
+Core garage operations do not read console input or print menu output.
+
 ### Open/Closed Principle
 
-Garage obtains rates and required sizes through virtual
+Garage obtains hourly rates and required sizes through virtual
 Vehicle functions.
 
 A new vehicle type using the existing slot sizes can be added
@@ -378,7 +500,7 @@ for creating that new type.
 
 ## Automatic Demo
 
-Run with `--demo`.
+Run the application with `--demo`.
 
 The demo uses a separate garage with two floors, one row per floor,
 and three columns per row.
@@ -389,7 +511,7 @@ It checks:
 - Ownership transfer during parking and retrieval.
 - Smallest suitable slot selection across floors.
 - Distinct newly issued ticket numbers.
-- Preservation of ticket number when copied.
+- Preservation of a ticket number when copied.
 - Vehicle-specific slot sizes and fees.
 - Overnight duration calculation.
 - Zero-duration and partial-hour charges.
@@ -404,17 +526,18 @@ It prints occupancy maps before and after the demonstrated operations.
 Four vehicles intentionally remain parked at the end.
 They are destroyed automatically when the demo garage is destroyed.
 
-The Windows demo has completed successfully with exit code `0`.
+The demo has completed successfully on Windows and Linux
+with exit code `0`.
 
-## Manual Test Cases
+## Manual Test Checklist
 
 Unless stated otherwise, start each case with a fresh interactive run.
 Use the actual ticket number printed by the application.
 
 These are reproducible test cases with expected results.
-The table is not a claim that every case has been manually verified.
+Completion of the entire interactive checklist has not yet been recorded.
 
-| No. | Action | Expected result |
+| No. | Input or action | Expected result |
 | --- | --- | --- |
 | 1 | Display the map immediately after startup | All 12 slots are empty; total occupied is 0 |
 | 2 | Park a car with plate CAR-100 | A Medium slot is selected and a ticket is printed |
@@ -438,24 +561,58 @@ The table is not a claim that every case has been manually verified.
 | 20 | Calculate a fee without choosing retrieval | Vehicle and ticket remain active |
 | 21 | Enter option 0 | Application exits normally |
 
-## Build Warnings and Remaining Validation
+## Memory Validation with Valgrind
+
+Verified on Ubuntu under WSL using:
+
+- GCC 15.2.0
+- CMake 4.2.3
+- Valgrind 3.26.0
+
+Run:
+
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ~/parking-garage-build/CMakeProject1/CMakeProject1 --demo
+```
+
+Check the exit code immediately afterward:
+
+```bash
+echo $?
+```
+
+### Recorded Result
+
+The demo completed successfully on September 29, 2026.
+
+```text
+All demo checks passed.
+
+HEAP SUMMARY:
+    in use at exit: 0 bytes in 0 blocks
+  total heap usage: 31 allocs, 31 frees, 76,868 bytes allocated
+
+All heap blocks were freed -- no leaks are possible
+
+ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+Exit code: `0`.
+
+Valgrind detected no memory errors or leaks during this demo run.
+This result covers the executed demo paths.
+
+Allocation counts may differ between compiler or library versions.
+
+## Build Warnings
 
 CMake enables:
 
 - `/W4` for MSVC.
-- `-Wall -Wextra` for other supported compilers.
+- `-Wall -Wextra` for GCC.
 
-Windows rebuilding and automatic demo execution have been verified
-during development.
-
-Remaining validation before final submission:
-
-- Final clean rebuild of the completed project.
-- Complete and record the manual test cases.
-- Build and run on Linux.
-- Run Valgrind and record its actual output.
-
-No claim of a successful Valgrind run is made yet.
+The Linux build completed successfully with no compiler warnings
+in the recorded build output.
 
 ## Git Workflow
 
@@ -473,6 +630,14 @@ Implemented stages include:
 - Console menu.
 - Automatic demo.
 
+Build output is excluded through `.gitignore`.
+
 Repository:
 
-https://github.com/yehya0115/parking-garage-system
+[Parking Garage System on GitHub](https://github.com/yehya0115/parking-garage-system)
+
+## Remaining Validation
+
+- Complete and record the interactive manual test checklist.
+- Rebuild and repeat relevant checks if source code changes.
+- Review the code and rehearse the individual walkthrough.
