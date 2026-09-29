@@ -535,7 +535,17 @@ Unless stated otherwise, start each case with a fresh interactive run.
 Use the actual ticket number printed by the application.
 
 These are reproducible test cases with expected results.
-Completion of the entire interactive checklist has not yet been recorded.
+Interactive validation performed on September 29, 2026 confirmed:
+
+- Rejection of `abc`, `2abc`, and out-of-range menu option `9`.
+- Rejection of an empty license plate.
+- Rejection of hour `24` and minute `60`, followed by successful correction.
+- Successful parking of car `TEST-100`.
+- A fee of 40.00 EGP for parking from 10:00 to 11:30.
+- Cancelling retrieval preserves the active ticket and occupancy count of 1.
+- Confirming retrieval returns the correct vehicle and reduces occupancy to 0.
+
+Other checklist cases remain available for further manual verification.
 
 | No. | Input or action | Expected result |
 | --- | --- | --- |
