@@ -77,13 +77,13 @@ After building, run the interactive application from PowerShell
 in the repository root:
 
 ```powershell
-.\out\build\x64-debug\CMakeProject1\CMakeProject1.exe
+.\out\build\x64-debug\CMakeProject1\ParkingGarageSystem.exe
 ```
 
 Run the automatic demonstration:
 
 ```powershell
-.\out\build\x64-debug\CMakeProject1\CMakeProject1.exe --demo
+.\out\build\x64-debug\CMakeProject1\ParkingGarageSystem.exe --demo
 ```
 
 Check the exit code immediately afterward:
@@ -137,13 +137,13 @@ This also keeps Linux build files separate from the Windows build.
 Run the interactive application:
 
 ```bash
-~/parking-garage-build/CMakeProject1/CMakeProject1
+~/parking-garage-build/CMakeProject1/ParkingGarageSystem
 ```
 
 Run the automatic demo:
 
 ```bash
-~/parking-garage-build/CMakeProject1/CMakeProject1 --demo
+~/parking-garage-build/CMakeProject1/ParkingGarageSystem --demo
 ```
 
 Check the exit code immediately afterward:
@@ -582,7 +582,7 @@ Verified on Ubuntu under WSL using:
 Run:
 
 ```bash
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ~/parking-garage-build/CMakeProject1/CMakeProject1 --demo
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ~/parking-garage-build/CMakeProject1/ParkingGarageSystem --demo
 ```
 
 Check the exit code immediately afterward:
