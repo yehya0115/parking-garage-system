@@ -1,4 +1,4 @@
-﻿add_executable(CMakeProject1
+﻿add_executable(ParkingGarageSystem
     "CMakeProject1.cpp"
     "CMakeProject1.h"
     "Money.cpp"
@@ -21,11 +21,11 @@
     "Garage.cpp"
     "ConsoleMenu.h"
     "ConsoleMenu.cpp"
-        "Demo.h"
+    "Demo.h"
     "Demo.cpp"
 )
 
-set_target_properties(CMakeProject1 PROPERTIES
+set_target_properties(ParkingGarageSystem PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS OFF
@@ -33,7 +33,7 @@ set_target_properties(CMakeProject1 PROPERTIES
 
 if(MSVC)
     string(REPLACE "/W3" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    target_compile_options(CMakeProject1 PRIVATE /W4)
+    target_compile_options(ParkingGarageSystem PRIVATE /W4)
 else()
-    target_compile_options(CMakeProject1 PRIVATE -Wall -Wextra)
+    target_compile_options(ParkingGarageSystem PRIVATE -Wall -Wextra)
 endif()
